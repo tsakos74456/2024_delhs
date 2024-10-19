@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
+#include"helpful.h"
 
 int main(int argc, char *argv[]){
     
@@ -12,8 +9,7 @@ int main(int argc, char *argv[]){
     }
 
     if(strcmp(argv[1],"-i") || strcmp(argv[3],"-o")){
-        printf(argv[1]," ",argv[3]);
-        printf("ERROR!\n");
+        printf("ERROR in args!\n");
         return -1;
     }
 
@@ -21,7 +17,15 @@ int main(int argc, char *argv[]){
     input = fopen(argv[2],"r");
     output = fopen(argv[4],"w");
 
+    if(input == NULL) {
+        perror("Error opening file");\
+        return -1;
+    }
+    List* list = list_create();
     // reading the instruction by the user
+
+
+
     printf("I wait for your instruction:\n");
     char cmd[32];
     int numbers[32]; 
@@ -33,9 +37,9 @@ int main(int argc, char *argv[]){
         // 1. i(nsert) Ni [Nj Nk ...]
         if(!strncmp(cmd,"i",1)){
             int count = 0;
-            while ((token = strtok(NULL, " ")) != NULL) {   
-                numbers[count] = atoi(token);
-                count++;
+            while ((token = strtok(NULL, " ")) != NULL) {
+                if (*token != '\n')
+                    list_insert_node(list,token);
             }
         }
 
@@ -97,7 +101,9 @@ int main(int argc, char *argv[]){
         fgets(cmd,sizeof(cmd),stdin);
         token = strtok(cmd, " ");  // Get the first token (the command)
     }
-
+    list_print(list);
+    printf("%d!",list_size(list));
+    list_destroy(list);
     fclose(input);
     fclose(output);
 }
